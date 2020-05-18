@@ -32,7 +32,7 @@ Sample input
 ```
 Search Vehicle publishings
 
-GET    http://localhost:8000/api/vehicle/search?model=auid
+GET    http://localhost:8000/api/vehicle/search?make=auid
 [
     {
         "code": "2",
@@ -64,17 +64,22 @@ mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8000
 
 #####Problems you discovered
 ```In the given CSV, color is missing for the last row, added validation based on the lenght of the coloumn, if the column lenght is less than 6 then returning 400 bad request error```
-
 ```In the given CSV make and model are combined in single column but in the given json request make and model are given separte, added functionality accordingly and handling based on the input request```
+
+#####Executed tests and results
+```
+Exected Integration test related to upload CSV and publish lisitng using JSON format
+```
 
 #####Ideas you would like to implement if you had time
 ```
-1. Handling more test cases
+1. Handling more test cases (search etc)
 2. Will move make and model into catalog data tabel and while publishing data will FK_ID instead of make and model text so that we cn reduce repeted values
 3. More accurate CSV reading process, as of now if one row is wrongly given skipping all the data, instead of that I can improve this process and publish correct rows and skipp the failed rows and will return the response with failed rows
 4. Fly way configuration to inserted some dealer data(dummy data) and validate the dealer id against dealer table while publishing the list
-5. FK relations
+5. FK relations, Other DB configuration instead of h2 database
 ```
+
 #####Decisions you had to take and why
 ```
 If the column length is less the 6 then skipping all the data and returning client error

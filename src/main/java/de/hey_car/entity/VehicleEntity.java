@@ -9,6 +9,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import static javax.persistence.GenerationType.IDENTITY;
 

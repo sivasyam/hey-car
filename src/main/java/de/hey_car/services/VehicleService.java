@@ -1,10 +1,11 @@
 package de.hey_car.services;
 
 import com.querydsl.core.BooleanBuilder;
+
 import de.hey_car.dto.VehicleDTO;
 import de.hey_car.entity.VehicleEntity;
 import de.hey_car.repository.VehicleRepository;
-import lombok.RequiredArgsConstructor;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import lombok.RequiredArgsConstructor;
+
 import static de.hey_car.utils.CSVProcessor.processCSV;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class VehicleService {
 
     private static final Logger LOGGER = LogManager.getLogger(VehicleService.class);
@@ -28,34 +32,22 @@ public class VehicleService {
 
     /**
      * Method to process the data from CSV file
-     *
-     * @param file
-     * @param dealerId
      */
-    @Transactional
     public String uploadCSV(MultipartFile file, Long dealerId) {
         LOGGER.info("Processing data from csv for the dealer {}", dealerId);
-        try {
-            List list = vehicleRepository.saveAll(buildVehicleEntity(processCSV(file).parse(), dealerId));
-            if (list.size() > 0) {
-                LOGGER.info("published successfully ");
-                return "Published Successfully";
-            } else {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error Occurred while publishing");
-            }
-        } catch (Exception ex) {
-            LOGGER.error("Unable to process the request ", ex);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to process csv" + ex.getMessage());
+
+        List list = vehicleRepository.saveAll(buildVehicleEntity(processCSV(file), dealerId));
+        if (list.size() > 0) {
+            LOGGER.info("published successfully ");
+            return "Published Successfully";
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error Occurred while publishing");
         }
     }
 
     /**
      * Method to save publishing
-     *
-     * @param vehicleList
-     * @param dealerId
      */
-    @Transactional
     public void saveListing(List<VehicleDTO> vehicleList, Long dealerId) {
         try {
             LOGGER.info("Publishing vehicle list from JSON for the dealer {}", dealerId);
@@ -68,27 +60,15 @@ public class VehicleService {
 
     /**
      * Method to search publishing
-     *
-     * @param booleanBuilder
-     * @return
      */
     public List<VehicleDTO> searchPublishing(BooleanBuilder booleanBuilder) {
-        try {
-            return (booleanBuilder.getValue() != null) ?
-                    buildVehicleResponse((List<VehicleEntity>) vehicleRepository.findAll(booleanBuilder.getValue()))
-                    : buildVehicleResponse(vehicleRepository.findAll());
-        } catch (Exception e) {
-            LOGGER.error("Unable to process the request ", e);
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to publish the listing" + e.getMessage());
-        }
+        return (booleanBuilder.getValue() != null) ?
+                buildVehicleResponse((List<VehicleEntity>) vehicleRepository.findAll(booleanBuilder.getValue()))
+                : buildVehicleResponse(vehicleRepository.findAll());
     }
 
     /**
      * Method to build vehicle entity
-     *
-     * @param vehicleList
-     * @param dealerId
-     * @return
      */
     private List<VehicleEntity> buildVehicleEntity(List<VehicleDTO> vehicleList, Long dealerId) {
         return vehicleList.stream()
@@ -104,10 +84,6 @@ public class VehicleService {
 
     /**
      * Method to build vehicle entity
-     *
-     * @param vehicleDTO
-     * @param dealerId
-     * @return
      */
     private VehicleEntity buildVehicleEntity(VehicleDTO vehicleDTO, Long dealerId) {
         return VehicleEntity.builder()
@@ -123,16 +99,21 @@ public class VehicleService {
     }
 
     /**
-     * @param vehicleEntityList
-     * @return
+     *
      */
     private List<VehicleDTO> buildVehicleResponse(List<VehicleEntity> vehicleEntityList) {
+        if (vehicleEntityList.size() == 0)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No result found");
         return vehicleEntityList.stream().map(p -> {
             return VehicleDTO.builder()
                     .code(p.getCode())
                     .color(p.getColor())
                     .kw(p.getKw())
-                    .price(p.getPrice()).make(p.getMake()).model(p.getModel()).build();
+                    .year(p.getYear())
+                    .price(p.getPrice())
+                    .make(p.getMake())
+                    .model(p.getModel())
+                    .build();
         }).collect(Collectors.toList());
     }
 }

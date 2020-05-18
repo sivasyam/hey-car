@@ -1,37 +1,28 @@
 package de.hey_car.dto;
 
-import com.opencsv.bean.CsvBindByName;
+import javax.validation.constraints.NotEmpty;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @Data
 @Builder
 @Setter
 @Getter
 public class VehicleDTO {
-    @CsvBindByName
-    @NotNull
+    @NotEmpty
     private String code;
-    @CsvBindByName(column = "make/model")
-    @NotNull
+    @NotEmpty
     private String make;
-    @NotNull
     private String model;
-    @CsvBindByName(column = "power-in-ps")
+    @NotEmpty
     private Long kw;
-    @NotNull
-    @CsvBindByName
-    @NotNull
+    @NotEmpty
     private Integer year;
-    @CsvBindByName
-    @NotNull
+    @NotEmpty
     private String color;
-    @CsvBindByName
-    @NotNull
+    @NotEmpty
     private Double price;
 }

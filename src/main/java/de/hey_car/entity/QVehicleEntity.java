@@ -9,7 +9,6 @@ import javax.annotation.Generated;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.PathInits;
 
-
 @Generated("com.querydsl.codegen.EntitySerializer")
 public class QVehicleEntity extends EntityPathBase<VehicleEntity> {
 
@@ -19,15 +18,13 @@ public class QVehicleEntity extends EntityPathBase<VehicleEntity> {
 
     public static final QVehicleEntity vehicle = new QVehicleEntity("vehicle");
 
-    public final QVehicleEntity company;
+    public final QVehicleEntity ve;
 
     public final StringPath modle = createString("model");
     public final StringPath make = createString("make");
     public final StringPath color = createString("color");
 
     public final NumberPath<Long> year = createNumber("year", Long.class);
-
-    public final StringPath lastName = createString("lastName");
 
     public QVehicleEntity(String variable) {
         this(VehicleEntity.class, forVariable(variable), INITS);
@@ -47,7 +44,7 @@ public class QVehicleEntity extends EntityPathBase<VehicleEntity> {
 
     public QVehicleEntity(Class<? extends VehicleEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.company = inits.isInitialized("vehicle") ? new QVehicleEntity(forProperty("vehicle")) : null;
+        this.ve = inits.isInitialized("vehicle") ? new QVehicleEntity(forProperty("vehicle")) : null;
     }
 
 }

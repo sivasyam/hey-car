@@ -37,3 +37,5 @@ jwt:
 spring.jpa.properties.hibernate.default_schema: public
 hibernate:
   dialect: org.hibernate.dialect.H2Dialect
+server:
+  port: 8000

@@ -6,14 +6,6 @@ version: 2
 orbs:
   maven: circleci/maven@0.0.12
   kube-orb: circleci/kubernetes@0.11.0
-workflows:
-  build_push_deploy:
-    jobs:
-      - build:
-          context: heycar
-          filters:
-            branches:
-              only: master
 
 jobs:
   build:
